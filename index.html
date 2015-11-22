@@ -1,0 +1,250 @@
+<!doctype html>
+<html>
+<head>
+<title>Project Three Ben Taylor</title>
+<script>
+	  var canvas;
+	  var context;
+	  var circles = [];
+	  var squares = [];
+	  var pentagons = [];
+	  var triangles = [];
+	  var wierdShapes = [];
+	  var texts = [];
+	  var timer;
+	  var width = window.innerWidth;
+	  var height = window.innerHeight;
+	
+	  function Circle(x, y) {
+		this.x = x;
+		this.y = y;
+
+		this.dx = Math.random()*20-2;
+		this.dy = Math.random()*20-2;
+	  }
+	  function Square(x, y) {
+		this.x = x;
+		this.y = y;
+
+		this.dx = Math.random()*20-2;
+		this.dy = Math.random()*20-2;
+	  }
+	  function Pentagon(x, y) {
+		this.x = x;
+		this.y = y;
+
+		this.dx = Math.random()*20-2;
+		this.dy = Math.random()*20-2;
+	  }
+	  function Triangle(x, y) {
+		this.x = x;
+		this.y = y;
+
+		this.dx = Math.random()*20-2;
+		this.dy = Math.random()*20-2;
+	  }
+	  function WierdShape(x, y) {
+		this.x = x;
+		this.y = y;
+
+		this.dx = Math.random()*20-2;
+		this.dy = Math.random()*20-2;
+	  }
+	  function Text(x, y) {
+		this.x = x;
+		this.y = y;
+
+		this.dy = Math.random()*20-2;
+		this.dx = Math.random()*20-2;
+	  }
+      function init() {
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext("2d");
+ 
+        window.addEventListener('resize', resizeCanvas, false);
+        window.addEventListener('orientationchange', resizeCanvas, false);
+        resizeCanvas();
+		canvas.onclick = function(event) {
+			handleClick(event.clientX, event.clientY);
+		};
+		return setInterval(handleClick, 30);
+
+      }
+	  function handleClick(x, y) {
+	     var found = false;
+		 for (var i=0; i<circles.length; i++) {
+			d = Math.sqrt((circles[i].x - x)*(circles[i].x - x) + (circles[i].y - y)*(circles[i].y - y));
+			if (d <= 30) {
+				circles.splice(i, 1);
+				found = true;
+			}
+		 }
+		 fillBackgroundColor();
+		 if (!found) {
+			circles.push(new Circle(x, y));
+			squares.push(new Square(x, y));
+			pentagons.push(new Pentagon(x, y));
+			triangles.push(new Triangle(x, y));
+			wierdShapes.push(new WierdShape(x, y));
+			texts.push(new Text(x, y));
+		}
+		for (var i=0; i<circles.length; i++) {
+			drawCircle(circles[i]);
+		}
+		for (var i=0; i<circles.length; i++) {
+			drawSquare(squares[i]);
+		}
+		for (var i=0; i<pentagons.length; i++) {
+			drawPentagon(pentagons[i]);
+		}
+		for (var i=0; i<triangles.length; i++) {
+			drawTriangle(triangles[i]);
+		}
+		for (var i=0; i<wierdShapes.length; i++) {
+			drawWierdShape(wierdShapes[i]);
+		}
+		for (var i=0; i<texts.length; i++) {
+			drawText(texts[i]);
+		}
+	  }
+	  
+	  function drawCircle(circle) {
+		 context.beginPath();
+		 context.arc(circle.x, circle.y, 30, 0, degreesToRadians(360), true);
+		 var gradient = context.createLinearGradient(0, 0, canvas.width, canvas.width);
+		 gradient.addColorStop(0, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(0.5, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(1, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", 0)");
+		 context.fillStyle = gradient;
+		 context.fill();
+		if (circle.x + circle.dx > canvas.width || circle.x + circle.dx < 0)
+			circle.dx = -circle.dx;
+		if (circle.y + circle.dy > canvas.height || circle.y + circle.dy < 0)
+			circle.dy = -circle.dy;
+		circle.x += circle.dx;
+		circle.y += circle.dy;
+	  }
+	  function drawSquare(square) {
+		 context.beginPath();
+		 context.fillRect(square.x, square.y, 30, 30 );
+		 var gradient = context.createRadialGradient(238, 50, 250, 238, 50, 500);
+		 gradient.addColorStop(0, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(0.5, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(1, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", 0)");
+		 context.fillStyle = gradient;
+		 context.fill();
+		 if (square.x + square.dx > canvas.width || square.x + square.dx < 0)
+			square.dx = -square.dx;
+		if (square.y + square.dy > canvas.height || square.y + square.dy < 0)
+			square.dy = -square.dy;
+		square.x += square.dx;
+		square.y += square.dy;
+		 }
+	  function drawPentagon(pentagon) {
+		 var sides = 5;
+		 var size = 50;
+
+		context.beginPath();
+		context.moveTo (pentagon.x +  size * Math.cos(0), pentagon.y +  size *  Math.sin(0));          
+
+		for (var i = 1; i <= sides;i += 1) {
+			context.lineTo (pentagon.x + size * Math.cos(i * 2 * Math.PI / sides), pentagon.y + size * Math.sin(i * 2 * Math.PI / sides));
+}
+		 var gradient = context.createRadialGradient(800, 800, 100, 1000, 750, 500);
+		 gradient.addColorStop(0, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(0.5, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(1, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", 0)");
+		 context.fillStyle = gradient;
+		 context.fill();
+		 if (pentagon.x + pentagon.dx > canvas.width || pentagon.x + pentagon.dx < 0)
+			pentagon.dx = -pentagon.dx;
+		if (pentagon.y + pentagon.dy > canvas.height || pentagon.y + pentagon.dy < 0)
+			pentagon.dy = -pentagon.dy;
+		pentagon.x += pentagon.dx;
+		pentagon.y += pentagon.dy;
+		 }
+	  function drawTriangle(triangle) {
+		 var sides = 3;
+		 var size = 20;
+
+		context.beginPath();
+		context.moveTo (triangle.x +  size * Math.cos(0), triangle.y +  size *  Math.sin(0));          
+
+		for (var i = 1; i <= sides;i += 1) {
+			context.lineTo (triangle.x + size * Math.cos(i * 2 * Math.PI / sides), triangle.y + size * Math.sin(i * 2 * Math.PI / sides));
+}
+		 var gradient = context.createRadialGradient(500, 300, 250, 800, 300, 600);
+		 gradient.addColorStop(0, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(0.5, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(1, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", 0)");
+		 context.fillStyle = gradient;
+		 context.fill();
+		 if (triangle.x + triangle.dx > canvas.width || triangle.x + triangle.dx < 0)
+			triangle.dx = -triangle.dx;
+		if (triangle.y + triangle.dy > canvas.height || triangle.y + triangle.dy < 0)
+			triangle.dy = -triangle.dy;
+		triangle.x += triangle.dx;
+		triangle.y += triangle.dy;
+		 }
+	  function drawWierdShape(wierdShape) {
+		context.beginPath();
+		context.moveTo(wierdShape.x, wierdShape.y);
+		context.bezierCurveTo(wierdShape.x + 100, wierdShape.x + 100, wierdShape.x + 130, wierdShape.x+150, wierdShape.x+150, wierdShape.x + 150);
+		context.closePath();
+		var gradient = context.createLinearGradient(0, 0, canvas.width, canvas.width);
+		 gradient.addColorStop(0, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(0.5, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(1, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", 0)");
+		 context.fillStyle = gradient;
+		context.fill();
+		if (wierdShape.x + wierdShape.dx > canvas.width || wierdShape.x + wierdShape.dx < 0)
+			wierdShape.dx = -wierdShape.dx;
+		if (wierdShape.y + wierdShape.dy > canvas.height || wierdShape.y + wierdShape.dy < 0)
+			wierdShape.dy = -wierdShape.dy;
+		wierdShape.x += wierdShape.dx;
+		wierdShape.y += wierdShape.dy;
+		}
+	  function drawText(text) {
+		context.font = '40pt Impact';
+		
+		var gradient = context.createLinearGradient(0, 0, canvas.width, canvas.width);
+		 gradient.addColorStop(0, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(0.5, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*100) + ")");
+			gradient.addColorStop(1, "rgba(" + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", " + Math.round(Math.random()*255) + ", 0)");
+		 context.fillStyle = gradient;
+		context.fillText('Canvas is Cool', text.x, text.y);
+		if (text.x + text.dx > canvas.width || text.x + text.dx < 0)
+			text.dx = -text.dx;
+		if (text.y + text.dy > canvas.height || text.y + text.dy < 0)
+			text.dy = -text.dy;
+		text.x += text.dx;
+		text.y += text.dy;
+		}
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+		fillBackgroundColor();
+		for (var i=0; i<circles.length; i++) {
+			drawCircle(circles[i]);
+		 }
+		 for (var i=0; i<squares.length; i++) {
+			drawSquare(squares[i]);
+		 }
+		 
+      }
+	  function fillBackgroundColor() {
+		 //var colors = ["white", "yellow", "blue", "red"];
+		 //var bgColor = colors[Math.floor(Math.random() * colors.length)];
+		 context.fillStyle = 'black';
+		 context.fillRect(0, 0, canvas.width, canvas.height);
+	}
+	function degreesToRadians(degrees) {
+		//converts from degrees to radians and returns
+		return (degrees * Math.PI)/180;
+	}
+	window.onload = init;
+</script>
+</head>
+<body>
+<canvas id='canvas' width=500 height=500></canvas>
+</body>	  
